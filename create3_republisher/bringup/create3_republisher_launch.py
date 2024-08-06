@@ -46,6 +46,19 @@ def generate_launch_description():
         name='create3_repub',
         output='screen',
         namespace=republisher_ns,
+        remappings=[
+            ([republisher_ns, 'cmd_vel'], [republisher_ns, 'cmd_vel_unstamped'])
+        ]
+    )
+
+    start_unstamper_node = Node(
+        package='twist_stamper',
+        executable='twist_unstamper',
+        name='twist_unstamper',
+        remappings=[
+            ('cmd_vel_in', [republisher_ns, 'cmd_vel']),
+            ('cmd_vel_out', [republisher_ns, 'cmd_vel_unstamped'])
+        ]
     )
 
     ld = LaunchDescription()
@@ -53,5 +66,6 @@ def generate_launch_description():
     ld.add_action(republisher_ns_argument)
     ld.add_action(robot_ns_argument)
     ld.add_action(start_republisher_node)
+    ld.add_action(start_unstamper_node)
 
     return ld
